@@ -1,29 +1,126 @@
 function EzSlide(options) {
     const {
-        containerSelector,
-        slideSelector,
-        transitionDurationSeconds,
-        transitionOffsetSeconds,
-        scrollSensitivity
+        containerSelector = '.slides-container',
+        slideSelector = '.slide',
+        transitionDurationSeconds = 0.5,
+        transitionOffsetSeconds = 0.3,
+        scrollSensitivity = 8,
+        anchorPrefix = 'slide-'
     } = options;
 
+    // Additional configuration
     const container = document.querySelector(containerSelector);
     const slides = container.querySelectorAll(slideSelector);
+    const transitionStyle = "transform " + transitionDurationSeconds + "s ease-in-out";
+    const slideHideClass = 'hide-slide';
     let currentSlideIndex = 0;
     let transitioning = false;
 
+    // Apply routines
+    init();
+    enableAnimation();
+    addListeners();
+
+    function nextSlide() {
+        if (currentSlideIndex >= slides.length - 1)
+            return;
+
+        slides[currentSlideIndex + 1].classList.remove(slideHideClass);
+        currentSlideIndex++;
+    }
+
+    function previousSlide() {
+        if (currentSlideIndex <= 0)
+            return;
+
+        slides[currentSlideIndex].classList.add(slideHideClass);
+        currentSlideIndex--;
+    }
+
+    function goToSlide(slideNumber) {
+
+        let index = slideNumber - 1;
+
+        // Check if index is valid
+        if (index < 0 || index >= slides.length)
+            return;
+
+        // Go to slide
+        if(currentSlideIndex < index)
+        {
+            for (let i = currentSlideIndex; i < index; i++) {
+                nextSlide();
+            }
+        }
+        else if(currentSlideIndex > index)
+        {
+            for (let i = currentSlideIndex; i > index; i--) {
+                previousSlide();
+            }
+        }
+    }
+
+    function waitForAnimationToEnd() {
+
+        removeListeners();
+        transitioning = true;
+
+        setTimeout(() => {
+            transitioning = false;
+            addListeners();
+        }, (transitionDurationSeconds + transitionOffsetSeconds) * 1000);
+    }
+
+    function addListeners() {
+        // Listen for wheel scroll events or touch events
+        document.addEventListener('wheel', scrollFired);
+        document.addEventListener('touchstart', scrollFired);
+    }
+
+    function removeListeners() {
+        // Stop listening for more scrolls
+        document.removeEventListener('wheel', scrollFired);
+        document.removeEventListener('touchstart', scrollFired);
+    }
+
     // Apply duration to animation of each slide
-    slides.forEach(function (slide) {
-        slide.style.transition = "transform " + transitionDurationSeconds + "s ease-in-out"
+    function enableAnimation() {
+        slides.forEach(function (slide) {
+            slide.style.transition = transitionStyle;
+        });
+    }
+
+    // Disable animation of each slide
+    function disableAnimation() {
+        slides.forEach(function (slide) {
+            slide.style.transition = '0s';
+        });
+    }
+
+
+    // Listen for manual hash changes
+    window.addEventListener('hashchange', function () {
+        const hash = window.location.hash;
+        let prefix = "#" + anchorPrefix;
+        if (!hash.startsWith(prefix))
+            return;
+
+        // Get slide index
+        let slideIndex = parseInt(hash.replace(prefix, ''));
+        if (isNaN(slideIndex))
+            return;
+
+        // Go to slide
+        goToSlide(slideIndex);
     });
+
 
     // Fired when user scrolls or swipes
     function scrollFired(event) {
 
         // Prevent any more scrolls
-        if (transitioning) {
+        if (transitioning)
             return;
-        }
 
 
         // For desktop
@@ -76,50 +173,19 @@ function EzSlide(options) {
 
         // Animate the slides
         if (direction === "down") {
-           nextSlide();
+            nextSlide();
         } else if (direction === "up") {
             previousSlide();
         }
     }
 
-    function nextSlide() {
-        if(currentSlideIndex >= slides.length - 1)
-            return;
-
-        slides[currentSlideIndex + 1].classList.remove('from-bottom');
-        currentSlideIndex++;
-    }
-
-    function previousSlide() {
-        if(currentSlideIndex <= 0)
-            return;
-
-        slides[currentSlideIndex].classList.add('from-bottom');
-        currentSlideIndex--;
-    }
-
-    function waitForAnimationToEnd() {
-
-        removeListeners();
-        transitioning = true;
-
-        setTimeout(() => {
-            transitioning = false;
-            addListeners();
-        }, (transitionDurationSeconds + transitionOffsetSeconds) * 1000);
-    }
-
-    function addListeners() {
-        // Listen for wheel scroll events or touch events
-        document.addEventListener('wheel', scrollFired);
-        document.addEventListener('touchstart', scrollFired);
-    }
-
-    addListeners();
-
-    function removeListeners() {
-        // Stop listening for more scrolls
-        document.removeEventListener('wheel', scrollFired);
-        document.removeEventListener('touchstart', scrollFired);
+    function init()
+    {
+        // Hide all slides except the first one
+        for (let i = 0; i < slides.length; i++) {
+            if (i !== currentSlideIndex) {
+                slides[i].classList.add('hide-slide');
+            }
+        }
     }
 }
