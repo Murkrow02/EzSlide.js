@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzSlide</title>
+    <link rel="stylesheet" href="src/ez-slide.css">
+    <style>
+
+        .slide{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font: 5em Arial, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="slides-container">
+    <div class="slide active to-center" style="background-color: #ff0000; z-index: 1;">Slide 1</div>
+    <div class="slide from-bottom" style="background-color: #0006ff; z-index: 2;">Slide 2</div>
+    <div class="slide from-bottom" style="background-color: #0fff00; z-index: 3;">Slide 3</div>
+</div>
+
+
+
+<script src="src/ez-slide.js"></script>
+
+
+<script>
+
+    // Example usage:
+    EzSlide({
+        containerSelector: '.slides-container',
+        slideSelector: '.slide',
+        transitionDurationSeconds: 0.5,
+        transitionOffsetSeconds: 0.3,
+        scrollSensitivity: 8
+    });
+
+</script>
+
+</body>
+</html>
