@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrollable Slides</title>
+    <style>
+        /* Full page layout */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Slides container */
+        .slides-container {
+            position: relative;
+            height: 100vh;
+        }
+
+        /* Individual slide */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+        }
+
+        .slide.from-bottom
+        {
+            transform: translate(0,100vh)
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="slides-container">
+    <div class="slide active to-center" style="background-color: #ffcccc; z-index: 1;">Slide 1</div>
+    <div class="slide from-bottom" style="background-color: #ccffcc; z-index: 2;">Slide 2</div>
+    <div class="slide from-bottom" style="background-color: #ccccff; z-index: 3;">Slide 3</div>
+</div>
+
+<script>
+
+    // Get slides container and slides
+    const slidesContainer = document.querySelector('.slides-container');
+    const slides = document.querySelectorAll('.slide');
+    let currentSlideIndex = 0;
+    let transitionDurationSeconds = 0.5;
+    let transitionOffsetSeconds = 0.3; // ignore any scrolls after x seconds
+    let scrollSensitivity = 8;
+
+    // Apply duration to animation
+    slides.forEach(function(slide){
+       slide.style.transition = "transform " + transitionDurationSeconds + "s ease-in-out"
+    });
+
+    // Move slides into view based on scroll direction
+    function moveSlides(event) {
+
+        // How much scrolled (force)
+        const delta = event.deltaY;
+
+        console.log('delta: ' + delta);
+
+        // Detect weak scroll
+        if(Math.abs(delta) < scrollSensitivity)
+            return;
+
+        // Get direction
+        let direction = delta > 0 ? "down" : "up";
+        if(direction === "down" && currentSlideIndex < slides.length -1)
+        {
+            // Prevent any more scrolls
+            waitForAnimationToEnd();
+
+            slides[currentSlideIndex+1].classList.remove('from-bottom');
+            currentSlideIndex++;
+        }
+        else if (direction === "up" && currentSlideIndex > 0)
+        {
+            // Prevent any more scrolls
+            waitForAnimationToEnd();
+
+            slides[currentSlideIndex].classList.add('from-bottom');
+            currentSlideIndex--;
+        }
+
+    }
+    function waitForAnimationToEnd()
+    {
+        // Stop listening for more scrolls
+        document.removeEventListener('wheel', moveSlides);
+
+        setTimeout(() => {
+
+            // Listen for wheel scroll events
+            document.addEventListener('wheel', moveSlides);
+
+        }, (transitionDurationSeconds + transitionOffsetSeconds) * 1000);
+
+    }
+
+
+    // Listen for wheel scroll events
+    document.addEventListener('wheel', moveSlides);
+</script>
+
+</body>
+</html>
