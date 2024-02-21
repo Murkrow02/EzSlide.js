@@ -1,0 +1,1 @@
+# ez-slide.js
