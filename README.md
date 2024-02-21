@@ -10,12 +10,15 @@ Simply include the `ez-slide.js` and `ez-slide.css` files in your project and co
 
 ```javascript
 var slide = new EzSlide({
-    containerSelector: '.slide-container',
-    slideSelector: '.slide',
+    containerSelector : '.slides-container',
+    slideSelector : '.slide',
+    transitionDurationSeconds : 0.5,
+    transitionOffsetSeconds : 0.3,
+    scrollSensitivity : 8,
+    anchorPrefix : 'slide-',
+    enableNavigationDots: true,
     
     
-    
-    navigation: true,
     keyboard: true,
     onSlideChange: function(index) {
         console.log('Slide changed to ' + index);
