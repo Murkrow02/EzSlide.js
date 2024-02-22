@@ -34,7 +34,7 @@
 <script>
 
     // Example usage:
-    EzSlide({
+    new EzSlide({
         containerSelector: '.slides-container',
         slideSelector: '.slide',
         transitionDurationSeconds: 0.5,
@@ -42,8 +42,10 @@
         scrollSensitivity: 8,
         enableNavigationDots: true,
         navigationDotsPosition: 'right',
+        onSlideChange: function(slideIndex){
+            console.log('Slide changed to index: ' + slideIndex);
+        }
     });
-
 </script>
 
 </body>

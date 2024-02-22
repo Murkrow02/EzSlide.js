@@ -1,13 +1,28 @@
 function EzSlide(options) {
-    const {
+    let {
+
+        // Selectors
         containerSelector = '.slides-container',
         slideSelector = '.slide',
+
+        // Animation settings
         transitionDurationSeconds = 0.5,
         transitionOffsetSeconds = 0.3,
         scrollSensitivity = 8,
+
+        // Anchor navigation
+        enableAnchorNavigation = true,
         anchorPrefix = 'slide-',
+
+        // Keyboard navigation
+        enableKeyboardNavigation = true,
+
+        // Navigation dots
         enableNavigationDots = true,
-        navigationDotsPosition = 'right'
+        navigationDotsPosition = 'right',
+
+        // Callbacks
+        onSlideChange = function() {}
     } = options;
 
     // Additional configuration
@@ -87,6 +102,9 @@ function EzSlide(options) {
     // Called whenever slide changes
     function slideChanged()
     {
+         // Call user defined callback
+        onSlideChange(currentSlideIndex + 1);
+
         // Set anchor
         window.location.hash = "#" + anchorPrefix + (currentSlideIndex + 1);
 
@@ -212,20 +230,37 @@ function EzSlide(options) {
     |--------------------------------------------------------------------------
     */
     function addListeners() {
-        // Listen for wheel scroll events or touch events
         document.addEventListener('wheel', scrollFired);
         document.addEventListener('touchstart', scrollFired);
+
+        if(enableAnchorNavigation)
+            window.addEventListener('hashchange', anchorChangeFired);
+
+        if(enableKeyboardNavigation)
+            document.addEventListener('keydown', keyDownFired);
     }
 
     function removeListeners() {
-        // Stop listening for more scrolls
         document.removeEventListener('wheel', scrollFired);
         document.removeEventListener('touchstart', scrollFired);
+        window.removeEventListener('hashchange', anchorChangeFired);
+        document.removeEventListener('keydown', keyDownFired);
     }
 
 
-    // Listen for manual hash changes
-    window.addEventListener('hashchange', function () {
+
+
+    // Fired when key is pressed
+    function keyDownFired (event) {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+            nextSlide();
+        } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+            previousSlide();
+        }
+    }
+
+    // Fired when anchor path changes
+    function anchorChangeFired() {
         const hash = window.location.hash;
         let prefix = "#" + anchorPrefix;
         if (!hash.startsWith(prefix))
@@ -238,7 +273,7 @@ function EzSlide(options) {
 
         // Go to slide
         goToSlide(slideIndex);
-    });
+    }
 
 
     // Fired when user scrolls or swipes
@@ -287,5 +322,10 @@ function EzSlide(options) {
             }
         }
     }
+
+    // // Expose public methods
+    // return {
+    //     onSlideChange,
+    // };
 
 }
