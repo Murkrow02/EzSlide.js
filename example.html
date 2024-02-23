@@ -34,16 +34,19 @@
 <script>
 
     // Example usage:
-    new EzSlide({
-        containerSelector: '.slides-container',
-        slideSelector: '.slide',
-        transitionDurationSeconds: 0.5,
-        transitionOffsetSeconds: 0.3,
-        scrollSensitivity: 8,
+    EzSlide({
+        containerSelector : '.slides-container',
+        slideSelector : '.slide',
+        transitionDurationSeconds : 0.5,
+        transitionOffsetSeconds : 0.3,
+        scrollSensitivity : 8,
+        enableAnchorNavigation: true,
+        anchorPrefix : 'slide-',
+        enableKeyboardNavigation: true,
         enableNavigationDots: true,
         navigationDotsPosition: 'right',
-        onSlideChange: function(slideIndex){
-            console.log('Slide changed to index: ' + slideIndex);
+        onSlideChange: function(index) {
+            console.log('Slide changed to ' + index);
         }
     });
 </script>
