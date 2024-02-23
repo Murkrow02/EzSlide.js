@@ -1,4 +1,4 @@
-# ez-slide.js
+# EzSlide.js
 
 ![Logo](logo.png)
 
