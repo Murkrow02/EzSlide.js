@@ -5,6 +5,9 @@
 A simple and easy to use slide show library for web pages.
 Inspired by [FullPage.js](https://alvarotrigo.com/fullPage/) but simpler, lighter and free to use.
 
+## Demo
+You can see the library at work by clicking [Here](https://www.murkrowdev.org/EzSlide/example.html)
+
 ## How to use
 Simply include the `ez-slide.js` and `ez-slide.css` files in your project and configure the library like this:
 
